@@ -2,6 +2,7 @@ import React from 'react';
 import Contact from './Contact.js';
 import NewContact from './NewContact.js';
 import Alert from './Alert.js';
+import ContactApi from './contactApi.js';
 
 class Contacts extends React.Component {
     constructor(props) {
@@ -13,8 +14,24 @@ class Contacts extends React.Component {
         this.state = {
             errorInfo: null,
             selectedContact: null,
-            contacts: this.props.contacts
+            contacts: []
         };
+    }
+
+    componentDidMount() {
+        ContactApi.getAllContacts()
+          .then(
+              (result) => {
+                  this.setState({
+                      contacts: result
+                  });
+              },
+              (error) => {
+                  this.setState({
+                      errorInfo: "Problem with connection"
+                  })
+              }
+          )
     }
 
     handleEdit(contact) {
