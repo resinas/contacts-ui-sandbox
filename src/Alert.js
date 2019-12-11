@@ -9,7 +9,7 @@ function Alert(props) {
     return (
         <div className="alert alert-warning alert-dismissible" role="alert">
             <strong>Error!</strong> {props.message}
-            <button type="button" className="close" onClick={() => props.onClose()}>
+            <button data-testid="close" type="button" className="close" onClick={() => props.onClose()}>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -17,7 +17,7 @@ function Alert(props) {
 }
 
 Alert.propTypes = {
-    message: PropTypes.string.isRequired,
+    message: PropTypes.string,
     onClose: PropTypes.func.isRequired
 }
 
