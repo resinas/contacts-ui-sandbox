@@ -1,14 +1,20 @@
 class ContactApi {
 
-    API_BASE_URL = "/api/v1";
+    static API_BASE_URL = "/api/v1";
 
-    static requestHeaders() {
+    static requestHeaders(token) {
+        console.log(token);
+        if (token)
+            return {
+                Authorization: `Bearer ${token}`
+            }
+            
         return {};
     }
 
-    static getAllContacts() {
-        const headers = this.requestHeaders();
-        const request = new Request("/api/v1/contacts", {
+    static getAllContacts(token) {
+        const headers = this.requestHeaders(token);
+        const request = new Request(ContactApi.API_BASE_URL + "/contacts", {
             method: 'GET',
             headers: headers
         });

@@ -3,6 +3,7 @@ import Contact from './Contact.js';
 import NewContact from './NewContact.js';
 import Alert from './Alert.js';
 import ContactApi from './contactApi.js';
+import {AuthContext} from './AuthContext';
 
 class Contacts extends React.Component {
     constructor(props) {
@@ -19,19 +20,36 @@ class Contacts extends React.Component {
     }
 
     componentDidMount() {
-        ContactApi.getAllContacts()
-          .then(
-              (result) => {
-                  this.setState({
-                      contacts: result
-                  });
-              },
-              (error) => {
-                  this.setState({
-                      errorInfo: "Problem with connection"
-                  })
-              }
-          )
+        this.fetchContacts();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.auth !== this.props.auth) {
+            this.fetchContacts();
+        }
+    }
+
+    fetchContacts() {
+        if (this.props.auth) {
+            ContactApi.getAllContacts(this.props.auth.token)
+            .then(
+                (result) => {
+                    this.setState({
+                        contacts: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        errorInfo: "Problem with connection"
+                    })
+                }
+            )    
+        } else {
+            this.setState({
+                contacts: []
+            })
+        }
+
     }
 
     handleEdit(contact) {
@@ -40,7 +58,7 @@ class Contacts extends React.Component {
             const pos = contacts.findIndex(c => c.name === contact.name);
             return {
                 contacts: [...contacts.slice(0,pos), Object.assign({}, contact), ...contacts.slice(pos+1)],
-                selectedContact: contact
+                selectedContact: this.context.token
             }
         })
     }
@@ -84,8 +102,9 @@ class Contacts extends React.Component {
             <div>
                 <Alert message={this.state.errorInfo} onClose={this.handleErrorClick}/>
                 {displayContact}
+                {this.context ? this.context.token : null}
 
-                <table class="table">
+                <table className="table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -102,5 +121,7 @@ class Contacts extends React.Component {
         );
     }
 }
+
+//Contacts.contextType = AuthContext;
 
 export default Contacts
